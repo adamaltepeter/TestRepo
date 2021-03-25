@@ -103,3 +103,21 @@ summary(model2)
 model3 <- lm(borrower_rate ~ loan_status + amount_funded + prosper_rating + listing_term + listing_monthly_payment + scorex + stated_monthly_income + employment_status_description + occupation + lender_indicator + monthly_debt + inquiries_last6_months + open_credit_lines + bankcard_utilization + delinquencies_over30_days, data = listings)
 summary(model3)
 ```
+#Modify dataset for Logistic Regression
+```{r}
+#set up new data frame
+listings2 <- listings
+listings2$loan_status <- ifelse(listings2$loan_status == "DEFAULTED", 1,0)
+```
+
+#Run Logistic Regression Model
+```{r}
+logisticmodel1 <- glm(loan_status~., data = listings2, family = "binomial")
+summary(logisticmodel1)
+```
+
+##Update Logistic Model
+```{r}
+logisticmodel2 = glm(loan_status ~ number_of_days + principal_balance + prosper_rating + borrower_rate + listing_term + bankcard_utilization + total_inquiries, data = listings2, family = "binomial")
+summary(logisticmodel2)
+```
