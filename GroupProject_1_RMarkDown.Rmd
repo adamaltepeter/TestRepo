@@ -341,8 +341,6 @@ Prediction Accuracy|`r accuracy_02`                 |`r accuracy_03`            
 
 
 
-
-
 ***
 
 
