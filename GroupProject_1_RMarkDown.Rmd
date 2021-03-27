@@ -262,7 +262,7 @@ summary(logisticmodel2)
 
 > Use stepwise regression (forward and backward selection) to determine the appropriate variables: Include `stated_monthly_income`
 
-```{r}
+```{r, warning=FALSE}
 logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
 summary(logisticmodel3)
 ```
@@ -276,9 +276,65 @@ logisticmodel4 = glm(loan_status ~ number_of_days + principal_balance + amount_f
 summary(logisticmodel4)
 ```
 
-
-
 ### Model Selection
+
+#### AIC
+
+```{r}
+AIC_02 = logisticmodel2$aic
+AIC_03 = logisticmodel3$aic
+AIC_04 = logisticmodel3$aic
+```
+
+#### McFadden's Pseudo R-squared
+
+```{r}
+pR2_02 = round(1 - logisticmodel2$deviance / logisticmodel2$null.deviance, 4)
+pR2_03 = round(1 - logisticmodel3$deviance / logisticmodel3$null.deviance, 4)
+pR2_04 = round(1 - logisticmodel4$deviance / logisticmodel4$null.deviance, 4)
+```
+
+#### Confusion Matrix
+
+```{r}
+# Classiifications using cutoff = 0.1
+logisticmodel2_pred = ifelse(predict(logisticmodel2, type = "response") > 0.1, 1, 0)
+logisticmodel3_pred = ifelse(predict(logisticmodel3, type = "response") > 0.1, 1, 0)
+logisticmodel4_pred = ifelse(predict(logisticmodel4, type = "response") > 0.1, 1, 0)
+
+# Define a function to calculate error rate
+calc_class_err = function(actual, predicted) {mean(actual != predicted)}
+
+# Classification accuracy and error rate
+error_02 <- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel2_pred)
+accuracy_02 = round(1 - error_02, 5)
+
+error_03 <- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel3_pred)
+accuracy_03 = round(1 - error_03, 5)
+
+error_04 <- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel4_pred)
+accuracy_04 = round(1 - error_04, 5)
+```
+
+```{r}
+# Confusion Matrix
+logisticmodel2_conf_table = table(predicted = logisticmodel2_pred, actual = listings2$loan_status)
+logisticmodel2_conf_table
+
+logisticmodel3_conf_table = table(predicted = logisticmodel3_pred, actual = listings2$loan_status)
+logisticmodel3_conf_table
+
+logisticmodel4_conf_table = table(predicted = logisticmodel4_pred, actual = listings2$loan_status)
+logisticmodel4_conf_table
+```
+
+#### Summary Table
+
+Comparison         |Model 2                         |Model 3                         |Model 4
+-------------------|--------------------------------|--------------------------------|--------------------------------
+AIC                |`r format(AIC_02, scientific=F)`|`r format(AIC_03, scientific=F)`|`r format(AIC_04, scientific=F)`
+Pseudo R-Squared   |`r pR2_02`                      |`r pR2_03`                      |`r pR2_04`       
+Prediction Accuracy|`r accuracy_02`                 |`r accuracy_03`                 |`r accuracy_04`  
 
 
 ### Model Interpretation
@@ -289,6 +345,10 @@ summary(logisticmodel4)
 
 ***
 
+
+## Analysis
+
+***
 
 ## Conclusion
 
