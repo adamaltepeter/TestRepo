@@ -1,62 +1,40 @@
 ---
-title: "GroupProject_1_RMarkDown"
-author: "Anyu"
-date: "2021/3/19"
-output: html_document
+title: "Group Project #1: Prosper"
+author: "Group 3: Adam John Altepeter, Anyu Lei, Shubkarman Singh Sidhu, Andrew Tseng, Takumi Umemaki"
+date: "2021/3/28"
+output:
+  html_document:
+    toc: true
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Data Exploration and Cleansing
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
-
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
-```
-
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
-```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
-
-HI
-
-What is going on
-
-Hello
-
-
-
-## TO 628 Group Project 1: Prosper
-
-### Data Exploration and Cleansing 
+### Data Structure and Summary
 
 First, we import the dataset and see its structure.
+
 ```{r}
-#Import data
+# Import data and see the summary
 listings <- read.csv("ProjectA_Listings2013.csv")
 str(listings)
 summary(listings)
 ```
-Then, we convert applicable variables into factors to develop a linear regression model.
+
+### Data Transformation and Cleansing
+
+Then, we convert applicable variables into factors to develop both linear and logistic regression models.
 
 ```{r}
-#convert applicable variables into factors
+# Convert applicable variables into factors
 listings$loan_status <- as.factor(listings$loan_status)
 listings$loan_status <- factor(listings$loan_status, labels = c("CURRENT", "CHARGEOFF", "DEFAULTED", "COMPLETED"))
 listings$prosper_rating <- as.factor(listings$prosper_rating)
 listings$scorex <- as.factor(listings$scorex)
-listings$prosper_score <- as.factor(listings$prosper_score)
 listings$listing_category_id <- as.factor(listings$listing_category_id)
 listings$income_range <- as.factor(listings$income_range)
 listings$income_range <- factor(listings$income_range, labels = c("$0", "$1-24,999", "$25,000-49,999", "$50,000-74,999", "$75,000-99,999", "$100,000+", "Not employed"))
@@ -64,98 +42,254 @@ listings$employment_status_description <- as.factor(listings$employment_status_d
 listings$occupation <- as.factor(listings$occupation)
 listings$lender_indicator <- as.factor(listings$lender_indicator)
 ```
+
 We also delete unnecessary columns.
 
 ```{r}
-#Delete irrelevant variables
+# Delete repeated variables
 listings$loan_status_description <- NULL
-listings$loan_origination_date <- NULL
 listings$income_range_description <- NULL
+
+# Delete date variables
+listings$loan_origination_date <- NULL
+listings$first_recorded_credit_line <- NULL #Assuming this date does not affect interest rates
+
+# Delete location variables
 listings$borrower_state <- NULL #Assuming borrower states do not affect interest rates
 listings$borrower_city <- NULL #Assuming borrower cities do not affect interest rates
-listings$first_recorded_credit_line <- NULL #Assuming this date does not affect interest rates
+```
+
+Finally, we convert negative values.
+
+```{r}
+# Set negative values in months_employed to NA
+listings$months_employed <- ifelse(listings$months_employed < 0, NA, listings$months_employed)
+
+# See updated data summary
 summary(listings)
 ```
 
+***
+
+## Linear Regression {.tabset}
+
+### Model 1
+
+> Include all factors as independent variables in the linear regression model (Starting Model)
+
 ```{r}
-#Set negative values in months_employed to NA
-listings$months_employed <- ifelse(listings$months_employed < 0, NA, listings$months_employed)
-```
-
-
-### Linear Regression Model
-
-
-```{r}
-#Develop a linear regression model
+# Develop a linear regression model
 model1 <- lm(borrower_rate ~ ., data = listings)
 summary(model1)
 ```
 
+### Model 2
+
+> Remove all insignificant variables from Model 1
+
 ```{r}
-#Remove insignificant variables
+# Remove insignificant variables
 model2 <- lm(borrower_rate ~ number_of_days + principal_balance + loan_status + amount_funded + prosper_rating + listing_term + listing_monthly_payment + scorex + stated_monthly_income + employment_status_description + occupation + lender_indicator + monthly_debt + inquiries_last6_months + open_credit_lines + bankcard_utilization + delinquencies_over30_days, data = listings)
 summary(model2)
 ```
 
-#Remove ex post (items determined after loan funding) variables
+### Model 3
+
+>  Remove ex post (items determined after loan funding) variables
+
 ```{r}
 model3 <- lm(borrower_rate ~ loan_status + amount_funded + prosper_rating + listing_term + listing_monthly_payment + scorex + stated_monthly_income + employment_status_description + occupation + lender_indicator + monthly_debt + inquiries_last6_months + open_credit_lines + bankcard_utilization + delinquencies_over30_days, data = listings)
 summary(model3)
 ```
 
-#Anyu Model
-```{r}
-model4 <- lm(borrower_rate ~ 
-                  amount_funded
-                + prosper_rating
-                + listing_term
-                + listing_monthly_payment
-                + scorex
-                + prosper_score
-                + income_verifiable
-                + dti_wprosper_loan
-                + lender_indicator
-                + monthly_debt
-                + current_delinquencies
-                + public_records_last12_months
-                + inquiries_last6_months
-                + amount_delinquent
-                + current_credit_lines
-                + open_credit_lines
-                + bankcard_utilization
-                + total_open_revolving_accounts
-                + real_estate_balance
-                + total_inquiries
-                + satisfactory_accounts
-                + was_delinquent_derog
-                + delinquencies_over30_days
-                + delinquencies_over90_days
-                + is_homeowner
-                , data = listings)
+### Model 4
 
+> Use stepwise regression (forward and backward selection) to determine the appropriate variables 
+
+```{r}
+model4 <- lm(borrower_rate ~ amount_funded + prosper_rating + listing_term + listing_monthly_payment + scorex + prosper_score + income_verifiable + dti_wprosper_loan + lender_indicator + monthly_debt + current_delinquencies + public_records_last12_months + inquiries_last6_months + amount_delinquent + current_credit_lines + open_credit_lines + bankcard_utilization + total_open_revolving_accounts + real_estate_balance + total_inquiries + satisfactory_accounts + was_delinquent_derog + delinquencies_over30_days + delinquencies_over90_days + is_homeowner, data = listings)
+summary(model4)
 ```
 
+### Model Selection
+
+> Choice: **Model 4**
+
+* We start from Model 1 by including all potential independent variables to get an sense about how these variables help to explain the variations in `borrower_rate`. Then, we remove all insignificant variables to fit the model better. We also try adding one variable each time to the model to see if these variables become significant.
+* We choose **Model 4** as final regression model which explains the variations in loan interest rates because:
+  * 1. All independent variables except `scorex` are **significant** at a minimum of 95% level.
+  * 2. The model yields the highest **adjusted R-squared**, suggesting the model fits the data well. 
+
+### Model Interpretation
+
+> ***Overall Fit***
+
+* **Model 4** has the highest adjusted R-squared among all candidates, so we expect this model to best predict further loan interest rates (`borrower_rate`).
+* The adjusted R-squared of **Model 4** is `r summary(model4)$adj.r.squared`, indicting **`r paste(round(summary(model4)$adj.r.squared*100, 2), "%", sep="")`** of the variation in the loan interest rates (`borrower_rate`) in the sample is explained by the variation in a combination of loan term and size, credit risk and borrower status variables.
+
+> ***Regression Coefficients***
+
+```{r echo=FALSE, include=FALSE}
+# All coefficients of Model 4
+model4$coefficients
+```
+
+##### I Loan Size and Term
+
+1. `amount_funded`
+* `amount_funded` **decreases** `borrower_rate`: Every one unit ($1) increase in the funded amount of the listing is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["amount_funded","Estimate"], 4), "%", sep="")`.
+2. `listing_term`
+* `listing_term` **increase** `borrower_rate`: Every one unit (a month) increase in the listing terms is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["listing_term","Estimate"], 4), "%", sep="")`.
+3. `listing_monthly_payment`
+* `listing_monthly_payment` **increase** `borrower_rate`: Every one unit ($1) increase in the listing monthly payment is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["listing_monthly_payment","Estimate"], 4), "%", sep="")`.
+
+##### II Credit Score Matrices
+
+1. `prosper_rating`
+* `borrower_rate` of `prosper_ratingAA` is **lower**  than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(-coef(summary(model4))["prosper_ratingAA","Estimate"], 4), "%", sep="")` lower for a prosper rating of AA than for a prosper rating of A.
+* `borrower_rate` of `prosper_ratingB` is **higher** than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["prosper_ratingB","Estimate"], 4), "%", sep="")` higher for a prosper rating of B than for a prosper rating of A.
+* `borrower_rate` of `prosper_ratingC` is **higher** than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["prosper_ratingC","Estimate"], 4), "%", sep="")` higher for a prosper rating of C than for a prosper rating of A.
+* `borrower_rate` of `prosper_ratingD` is **higher** than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["prosper_ratingD","Estimate"], 4), "%", sep="")` higher for a prosper rating of D than for a prosper rating of A.
+* `borrower_rate` of `prosper_ratingE` is **higher** than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["prosper_ratingE","Estimate"], 4), "%", sep="")` higher for a prosper rating of E than for a prosper rating of A.
+* `borrower_rate` of `prosper_ratingHR` is **higher** than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["prosper_ratingHR","Estimate"], 4), "%", sep="")` higher for a prosper rating of HR than for a prosper rating of A.
+
+2. `scorex`
+* `borrower_rate` of `scorex600-619` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex600-619","Estimate"], 4), "%", sep="")` higher for a scorex range of 600-619 than for a scorex of lower than 600.
+* `borrower_rate` of `scorex620-639` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex620-639","Estimate"], 4), "%", sep="")` higher for a scorex range of 620-639 than for a scorex of lower than 600.
+* `borrower_rate` of `scorex640-649` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex640-649","Estimate"], 4), "%", sep="")` higher for a scorex range of 640-649 than for a scorex of lower than 600.
+* `borrower_rate` of `scorex650-664` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex650-664","Estimate"], 4), "%", sep="")` higher for a scorex range of 650-664 than for a scorex of lower than 600.
+* `borrower_rate` of `scorex665-689` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex665-689","Estimate"], 4), "%", sep="")` higher for a scorex range of 665-689 than for a scorex of lower than 600.
+* `borrower_rate` of `scorex690-701` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex690-701","Estimate"], 4), "%", sep="")` higher for a scorex range of 690-701 than for a scorex of lower than 600.
+* `borrower_rate` of `scorex702-723` is **higher**  than `scorex<600`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["scorex702-723","Estimate"], 4), "%", sep="")` higher for a scorex range of 702-723 than for a scorex of lower than 600.
+* difference in `borrower_rate` between `scorex724-747`, `scorex748-777`, `scorex778+` and base group `scorex<600` is not significant statistically.
+
+3. `prosper_score`
+* `prosper_score` **decreases** `borrower_rate`: Every one unit (one score) increase in the funded amount of the listing is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["prosper_score","Estimate"], 4), "%", sep="")`.
+
+##### III Other Credit Risk Matrices
+
+1. `dti_wprosper_loan`
+* `dti_wprosper_loan` **increase** `borrower_rate`: Every one unit increase in the debt to income ratio is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["dti_wprosper_loan","Estimate"], 4), "%", sep="")`.
+
+2. `lender_indicator`
+* `borrower_rate` of `lender_indicator1` is **higher**  than `lender_indicator0`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["lender_indicator1","Estimate"], 4), "%", sep="")` higher for a borrower who holds both borrower and investor roles than for a borrower who holds borrower role only.
+
+3. `monthly_debt`
+* `monthly_debt` **increase** `borrower_rate`: Every one unit ($1) increase in the monthly debt is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["monthly_debt","Estimate"], 4), "%", sep="")`.
+
+4. `current_delinquencies`
+* `current_delinquencies` **increase** `borrower_rate`: Every one unit increase in the current delinquencies is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["current_delinquencies","Estimate"], 4), "%", sep="")`.
+
+5. `amount_delinquent`
+* `amount_delinquent` **increase** `borrower_rate`: Every one unit ($1) increase in the current delinquent amount is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["amount_delinquent","Estimate"], 4), "%", sep="")`.
+
+6. `was_delinquent_derog`
+* `was_delinquent_derog` **increase** `borrower_rate`: Every one unit ($1) increase in the previous delinquencies is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["was_delinquent_derog","Estimate"], 4), "%", sep="")`.
+
+7. `delinquencies_over30_days`
+* `delinquencies_over30_days` **increase** `borrower_rate`: Every one unit increase in the number of delinquencies over 30 days at the time the listing is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["delinquencies_over30_days","Estimate"], 4), "%", sep="")`.
+
+8. `delinquencies_over90_days`
+* `delinquencies_over90_days` **decrease** `borrower_rate`: Every one unit increase in the number of delinquencies over 90 days at the time the listing is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["delinquencies_over90_days","Estimate"], 4), "%", sep="")`.
+
+9. `public_records_last12_months`
+* `public_records_last12_months` **increase** `borrower_rate`: Every one unit increase in the number of public records in the last 12 months at the time of listing is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["public_records_last12_months","Estimate"], 4), "%", sep="")`.
+
+10. `inquiries_last6_months`
+* `inquiries_last6_months` **decrease** `borrower_rate`: Every one unit increase in the number of inquiries made in the last 6 months at the time the listing is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["inquiries_last6_months","Estimate"], 4), "%", sep="")`.
+
+11. `total_inquiries`
+* `total_inquiries` **increase** `borrower_rate`: Every one unit increase in the total number of inquiries made is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["total_inquiries","Estimate"], 4), "%", sep="")`.
+
+12. `current_credit_lines`
+* `current_credit_lines` **increase** `borrower_rate`: Every one unit increase in the number of current credit lines is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["current_credit_lines","Estimate"], 4), "%", sep="")`.
+
+13. `open_credit_lines`
+* `open_credit_lines` **decrease** `borrower_rate`: Every one unit increase in the number of open credit lines is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["open_credit_lines","Estimate"], 4), "%", sep="")`.
+
+14. `bankcard_utilization`
+* `bankcard_utilization` **increase** `borrower_rate`: Every one unit (1%) increase in the utilization rate of bankcard is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["bankcard_utilization","Estimate"]/100, 5), "%", sep="")`.
+
+15. `total_open_revolving_accounts`
+* `total_open_revolving_accounts` **increase** `borrower_rate`: Every one unit increase in the total number of open revolving accounts is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["total_open_revolving_accounts","Estimate"], 4), "%", sep="")`.
+
+16. `satisfactory_accounts`
+* `satisfactory_accounts` **decrease** `borrower_rate`: Every one unit increase in the number of satisfactory accounts is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["satisfactory_accounts","Estimate"], 4), "%", sep="")`.
+
+17. `real_estate_balance`
+* `real_estate_balance` **increase** `borrower_rate`: Every one unit ($) increase in the real estate balance is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["real_estate_balance","Estimate"], 4), "%", sep="")`.
+
+18. `is_homeowner`
+* `borrower_rate` of `is_homeownerTRUE` is **lower**  than `is_homeownerFALSE`: Controlling for all other variables, the expected loan interest rate is `r paste(round(-coef(summary(model4))["is_homeownerTRUE","Estimate"], 4), "%", sep="")` lower for a borrower who owns a home than for a borrower who does not.
+
+##### IV Borrower Data
+
+1. `income_verifiable`
+* `borrower_rate` of `income_verifiableTRUE` is **higher**  than `income_verifiableFALSE`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["income_verifiableTRUE","Estimate"], 4), "%", sep="")` higher for a borrower whose income is verifiable than for a borrower whose income is not.
+
+***
 
 
+## Logistic Regression {.tabset}
 
+#### Modify dataset for Logistic Regression
 
-
-#Modify dataset for Logistic Regression
 ```{r}
 #set up new data frame
 listings2 <- listings
 listings2$loan_status <- ifelse(listings2$loan_status == "DEFAULTED", 1,0)
 ```
 
-#Run Logistic Regression Model
+### Model 1
+
+> Include all factors as independent variables in the logistic regression model (Starting Model)
+
 ```{r}
 logisticmodel1 <- glm(loan_status~., data = listings2, family = "binomial")
 summary(logisticmodel1)
 ```
 
-##Update Logistic Model
+### Model 2
+
+> Remove all insignificant variables from Model 1
+
 ```{r}
 logisticmodel2 = glm(loan_status ~ number_of_days + principal_balance + prosper_rating + borrower_rate + listing_term + bankcard_utilization + total_inquiries, data = listings2, family = "binomial")
 summary(logisticmodel2)
 ```
+
+### Model 3
+
+> Use stepwise regression (forward and backward selection) to determine the appropriate variables: Include `stated_monthly_income`
+
+```{r}
+logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
+summary(logisticmodel3)
+```
+
+### Model 4
+
+> Remove `stated_monthly_income` from Model 3 due to the warning message of fitted probabilities
+
+```{r}
+logisticmodel4 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + prosper_rating + borrower_rate + listing_term + prosper_score + inquiries_last6_months + total_open_revolving_accounts + real_estate_balance + revolving_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
+summary(logisticmodel4)
+```
+
+
+
+### Model Selection
+
+
+### Model Interpretation
+
+
+
+
+
+***
+
+
+## Conclusion
+
+
