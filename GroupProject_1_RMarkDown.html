@@ -2066,9 +2066,8 @@ summary(logisticmodel2)</code></pre>
 <blockquote>
 <p>Use stepwise regression (forward and backward selection) to determine the appropriate variables: Include <code>stated_monthly_income</code></p>
 </blockquote>
-<pre class="r"><code>logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = &quot;binomial&quot;)</code></pre>
-<pre><code>## Warning: glm.fit: fitted probabilities numerically 0 or 1 occurred</code></pre>
-<pre class="r"><code>summary(logisticmodel3)</code></pre>
+<pre class="r"><code>logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = &quot;binomial&quot;)
+summary(logisticmodel3)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = loan_status ~ number_of_days + principal_balance + 
@@ -2159,11 +2158,99 @@ summary(logisticmodel4)</code></pre>
 </div>
 <div id="model-selection-1" class="section level3">
 <h3>Model Selection</h3>
+<div id="aic" class="section level4">
+<h4>AIC</h4>
+<pre class="r"><code>AIC_02 = logisticmodel2$aic
+AIC_03 = logisticmodel3$aic
+AIC_04 = logisticmodel3$aic</code></pre>
+</div>
+<div id="mcfaddens-pseudo-r-squared" class="section level4">
+<h4>McFadden’s Pseudo R-squared</h4>
+<pre class="r"><code>pR2_02 = round(1 - logisticmodel2$deviance / logisticmodel2$null.deviance, 4)
+pR2_03 = round(1 - logisticmodel3$deviance / logisticmodel3$null.deviance, 4)
+pR2_04 = round(1 - logisticmodel4$deviance / logisticmodel4$null.deviance, 4)</code></pre>
+</div>
+<div id="confusion-matrix" class="section level4">
+<h4>Confusion Matrix</h4>
+<pre class="r"><code># Classiifications using cutoff = 0.1
+logisticmodel2_pred = ifelse(predict(logisticmodel2, type = &quot;response&quot;) &gt; 0.1, 1, 0)
+logisticmodel3_pred = ifelse(predict(logisticmodel3, type = &quot;response&quot;) &gt; 0.1, 1, 0)
+logisticmodel4_pred = ifelse(predict(logisticmodel4, type = &quot;response&quot;) &gt; 0.1, 1, 0)
+
+# Define a function to calculate error rate
+calc_class_err = function(actual, predicted) {mean(actual != predicted)}
+
+# Classification accuracy and error rate
+error_02 &lt;- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel2_pred)
+accuracy_02 = round(1 - error_02, 5)
+
+error_03 &lt;- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel3_pred)
+accuracy_03 = round(1 - error_03, 5)
+
+error_04 &lt;- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel4_pred)
+accuracy_04 = round(1 - error_04, 5)</code></pre>
+<pre class="r"><code># Confusion Matrix
+logisticmodel2_conf_table = table(predicted = logisticmodel2_pred, actual = listings2$loan_status)
+logisticmodel2_conf_table</code></pre>
+<pre><code>##          actual
+## predicted     0     1
+##         0 31155  1455
+##         1   838    94</code></pre>
+<pre class="r"><code>logisticmodel3_conf_table = table(predicted = logisticmodel3_pred, actual = listings2$loan_status)
+logisticmodel3_conf_table</code></pre>
+<pre><code>##          actual
+## predicted     0     1
+##         0 31062  1444
+##         1   931   105</code></pre>
+<pre class="r"><code>logisticmodel4_conf_table = table(predicted = logisticmodel4_pred, actual = listings2$loan_status)
+logisticmodel4_conf_table</code></pre>
+<pre><code>##          actual
+## predicted     0     1
+##         0 30991  1442
+##         1  1002   107</code></pre>
+</div>
+<div id="summary-table" class="section level4">
+<h4>Summary Table</h4>
+<table>
+<thead>
+<tr class="header">
+<th>Comparison</th>
+<th>Model 2</th>
+<th>Model 3</th>
+<th>Model 4</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>AIC</td>
+<td>12241</td>
+<td>12136.95</td>
+<td>12136.95</td>
+</tr>
+<tr class="even">
+<td>Pseudo R-Squared</td>
+<td>0.0269</td>
+<td>0.035</td>
+<td>0.0322</td>
+</tr>
+<tr class="odd">
+<td>Prediction Accuracy</td>
+<td>0.93164</td>
+<td>0.92919</td>
+<td>0.92714</td>
+</tr>
+</tbody>
+</table>
+</div>
 </div>
 <div id="model-interpretation-1" class="section level3">
 <h3>Model Interpretation</h3>
 <hr />
 </div>
+</div>
+<div id="analysis" class="section level2">
+<h2>Analysis</h2>
+<hr />
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
