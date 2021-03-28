@@ -341,7 +341,7 @@ Prediction Accuracy|`r accuracy_02`                 |`r accuracy_03`            
 
 Using the model selection criteria from the summary table it appears that Model 2, Model 3, and Model 4 are very close. The AIC, Pseudo R-Squared, and Prediction Accuracy for the models are all within 1% of each other. As such, this does not show one model as superior to the others.
 
-Looking at the Confusion matrices, the number of summed "False positives" and "False negatives," is lowest in model 2 (Model 2 = 2,293, Model 3 = 2,375, and Model 4 = 2,444). That said, the scenario that is most damaging is where you predict no default (a 0) and a default happens (a 1). The model that does the best in reducing this scenario is Model 4. As such, while there are very small differences in the models, **Model 4 is our selected model.**
+Looking at the Confusion matrices, the number of summed "False positives" and "False negatives," is lowest in model 2 (Model 2 = 2,293, Model 3 = 2,375, and Model 4 = 2,444). That said, the scenario that is most damaging is where you predict no default (a 0) and a default happens (a 1). The model that does the best in reducing this scenario is Model 4. As such, while there are very small differences in the models, **Model 4 is our selected model.** 
 
 ***
 
