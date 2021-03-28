@@ -584,8 +584,8 @@ summary(listings)</code></pre>
 <hr />
 </div>
 </div>
-<div id="linear-regression" class="section level2 tabset">
-<h2 class="tabset">Linear Regression</h2>
+<div id="linear-regression-model" class="section level2 tabset">
+<h2 class="tabset">Linear Regression Model</h2>
 <div id="model-1" class="section level3">
 <h3>Model 1</h3>
 <blockquote>
@@ -1476,14 +1476,10 @@ summary(model4)</code></pre>
 </blockquote>
 <ul>
 <li>We start from Model 1 by including all potential independent variables to get an sense about how these variables help to explain the variations in <code>borrower_rate</code>. Then, we remove all insignificant variables to fit the model better. We also try adding one variable each time to the model to see if these variables become significant.</li>
-<li>We choose <strong>Model 4</strong> as final regression model which explains the variations in loan interest rates because:
+<li>We choose <strong>Model 4</strong> as our final regression model which explains the variations in loan interest rates because:
 <ul>
-<li><ol style="list-style-type: decimal">
 <li>All independent variables except <code>scorex</code> are <strong>significant</strong> at a minimum of 95% level.</li>
-</ol></li>
-<li><ol start="2" style="list-style-type: decimal">
 <li>The model yields the highest <strong>adjusted R-squared</strong>, suggesting the model fits the data well.</li>
-</ol></li>
 </ul></li>
 </ul>
 </div>
@@ -1499,8 +1495,8 @@ summary(model4)</code></pre>
 <blockquote>
 <p><strong><em>Regression Coefficients</em></strong></p>
 </blockquote>
-<div id="i-loan-size-and-term" class="section level5">
-<h5>I Loan Size and Term</h5>
+<div id="a.-loan-size-and-term" class="section level5">
+<h5>A. Loan Size and Term</h5>
 <ol style="list-style-type: decimal">
 <li><code>amount_funded</code></li>
 </ol>
@@ -1520,8 +1516,8 @@ summary(model4)</code></pre>
 <li><code>listing_monthly_payment</code> <strong>increase</strong> <code>borrower_rate</code>: Every one unit ($1) increase in the listing monthly payment is associated with an estimated increase in the loan interest rate of 0.0027%.</li>
 </ul>
 </div>
-<div id="ii-credit-score-matrices" class="section level5">
-<h5>II Credit Score Matrices</h5>
+<div id="b.-credit-score-matrices" class="section level5">
+<h5>B. Credit Score Matrices</h5>
 <ol style="list-style-type: decimal">
 <li><code>prosper_rating</code></li>
 </ol>
@@ -1553,8 +1549,8 @@ summary(model4)</code></pre>
 <li><code>prosper_score</code> <strong>decreases</strong> <code>borrower_rate</code>: Every one unit (one score) increase in the funded amount of the listing is associated with an estimated decrease in the loan interest rate of 0.334%.</li>
 </ul>
 </div>
-<div id="iii-other-credit-risk-matrices" class="section level5">
-<h5>III Other Credit Risk Matrices</h5>
+<div id="c.-other-credit-risk-matrices" class="section level5">
+<h5>C. Other Credit Risk Matrices</h5>
 <ol style="list-style-type: decimal">
 <li><code>dti_wprosper_loan</code></li>
 </ol>
@@ -1589,7 +1585,7 @@ summary(model4)</code></pre>
 <li><code>was_delinquent_derog</code></li>
 </ol>
 <ul>
-<li><code>was_delinquent_derog</code> <strong>increase</strong> <code>borrower_rate</code>: Every one unit ($1) increase in the previous delinquencies is associated with an estimated increase in the loan interest rate of 0.014%.</li>
+<li><code>was_delinquent_derog</code> <strong>increase</strong> <code>borrower_rate</code>: Every one unit increase in the previous delinquencies is associated with an estimated increase in the loan interest rate of 0.014%.</li>
 </ul>
 <ol start="7" style="list-style-type: decimal">
 <li><code>delinquencies_over30_days</code></li>
@@ -1664,8 +1660,8 @@ summary(model4)</code></pre>
 <li><code>borrower_rate</code> of <code>is_homeownerTRUE</code> is <strong>lower</strong> than <code>is_homeownerFALSE</code>: Controlling for all other variables, the expected loan interest rate is 0.0926% lower for a borrower who owns a home than for a borrower who does not.</li>
 </ul>
 </div>
-<div id="iv-borrower-data" class="section level5">
-<h5>IV Borrower Data</h5>
+<div id="d.-borrower-data" class="section level5">
+<h5>D. Borrower Data</h5>
 <ol style="list-style-type: decimal">
 <li><code>income_verifiable</code></li>
 </ol>
@@ -1676,11 +1672,11 @@ summary(model4)</code></pre>
 </div>
 </div>
 </div>
-<div id="logistic-regression" class="section level2 tabset">
-<h2 class="tabset">Logistic Regression</h2>
+<div id="logistic-regression-model" class="section level2 tabset">
+<h2 class="tabset">Logistic Regression Model</h2>
 <div id="modify-dataset-for-logistic-regression" class="section level4">
 <h4>Modify dataset for Logistic Regression</h4>
-<pre class="r"><code>#set up new data frame
+<pre class="r"><code># Set up new data frame
 listings2 &lt;- listings
 listings2$loan_status &lt;- ifelse(listings2$loan_status == &quot;DEFAULTED&quot;, 1,0)</code></pre>
 </div>
@@ -2064,153 +2060,165 @@ summary(logisticmodel2)</code></pre>
 <div id="model-3-1" class="section level3">
 <h3>Model 3</h3>
 <blockquote>
-<p>Use stepwise regression (forward and backward selection) to determine the appropriate variables: Include <code>stated_monthly_income</code></p>
+<p>Use stepwise regression (forward and backward selection) to determine the appropriate variables</p>
 </blockquote>
-<pre class="r"><code>logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = &quot;binomial&quot;)
+<pre class="r"><code>logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = &quot;binomial&quot;)
 summary(logisticmodel3)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = loan_status ~ number_of_days + principal_balance + 
 ##     amount_funded + borrower_rate + listing_term + prosper_score + 
-##     stated_monthly_income + total_open_revolving_accounts + real_estate_balance + 
-##     total_inquiries + was_delinquent_derog, family = &quot;binomial&quot;, 
-##     data = listings2)
+##     total_open_revolving_accounts + real_estate_balance + total_inquiries + 
+##     was_delinquent_derog, family = &quot;binomial&quot;, data = listings2)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -0.7829  -0.3432  -0.2862  -0.2287   3.1002  
+## -0.8362  -0.3413  -0.2858  -0.2345   2.9926  
 ## 
 ## Coefficients:
 ##                                 Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)                   -2.879e+00  2.705e-01 -10.644  &lt; 2e-16 ***
-## number_of_days                -1.186e-03  1.741e-04  -6.813 9.56e-12 ***
-## principal_balance             -2.670e-05  8.509e-06  -3.138 0.001702 ** 
-## amount_funded                  3.122e-05  6.097e-06   5.120 3.05e-07 ***
-## borrower_rate                  4.605e-02  7.050e-03   6.533 6.46e-11 ***
-## listing_term                   9.977e-03  2.472e-03   4.037 5.42e-05 ***
-## prosper_score                 -7.767e-02  1.884e-02  -4.123 3.74e-05 ***
-## stated_monthly_income         -8.513e-05  1.167e-05  -7.293 3.03e-13 ***
-## total_open_revolving_accounts  1.558e-02  5.828e-03   2.673 0.007507 ** 
-## real_estate_balance           -4.013e-07  2.206e-07  -1.819 0.068905 .  
-## total_inquiries                2.496e-02  6.787e-03   3.679 0.000235 ***
-## was_delinquent_derog          -1.734e-02  8.132e-03  -2.132 0.033005 *  
+## (Intercept)                   -3.005e+00  2.696e-01 -11.146  &lt; 2e-16 ***
+## number_of_days                -1.229e-03  1.734e-04  -7.088 1.36e-12 ***
+## principal_balance             -2.536e-05  8.484e-06  -2.990  0.00279 ** 
+## amount_funded                  1.459e-05  5.626e-06   2.594  0.00949 ** 
+## borrower_rate                  4.424e-02  7.072e-03   6.255 3.98e-10 ***
+## listing_term                   1.150e-02  2.461e-03   4.674 2.96e-06 ***
+## prosper_score                 -8.897e-02  1.874e-02  -4.746 2.07e-06 ***
+## total_open_revolving_accounts  1.271e-02  5.798e-03   2.193  0.02833 *  
+## real_estate_balance           -9.353e-07  2.089e-07  -4.476 7.60e-06 ***
+## total_inquiries                1.601e-02  6.745e-03   2.374  0.01760 *  
+## was_delinquent_derog          -2.067e-02  8.134e-03  -2.542  0.01104 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 12552  on 33541  degrees of freedom
-## Residual deviance: 12113  on 33530  degrees of freedom
-## AIC: 12137
+## Residual deviance: 12176  on 33531  degrees of freedom
+## AIC: 12198
 ## 
 ## Number of Fisher Scoring iterations: 6</code></pre>
 </div>
 <div id="model-4-1" class="section level3">
 <h3>Model 4</h3>
 <blockquote>
-<p>Remove <code>stated_monthly_income</code> from Model 3 due to the warning message of fitted probabilities</p>
+<p>Add <code>stated_monthly_income</code> to Model 3. There’s a warning message of <strong><em>fitted probabilities numerically 0 or 1 occurred</em></strong>. Since <code>stated_monthly_income</code> is positively skewed and contains lots of “0” values, we use log1p to transform the income data.</p>
 </blockquote>
-<pre class="r"><code>logisticmodel4 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + prosper_rating + borrower_rate + listing_term + prosper_score + inquiries_last6_months + total_open_revolving_accounts + real_estate_balance + revolving_balance + total_inquiries + was_delinquent_derog, data = listings2, family = &quot;binomial&quot;)
+<pre class="r"><code># Set up new data frame and transform stated_monthly_income using log1p.
+listings3 &lt;- listings2
+listings3$stated_monthly_income &lt;- log1p(listings3$stated_monthly_income)
+
+# Logistic regression model 4
+logisticmodel4 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings3, family = &quot;binomial&quot;)
 summary(logisticmodel4)</code></pre>
 <pre><code>## 
 ## Call:
 ## glm(formula = loan_status ~ number_of_days + principal_balance + 
-##     amount_funded + prosper_rating + borrower_rate + listing_term + 
-##     prosper_score + inquiries_last6_months + total_open_revolving_accounts + 
-##     real_estate_balance + revolving_balance + total_inquiries + 
-##     was_delinquent_derog, family = &quot;binomial&quot;, data = listings2)
+##     amount_funded + borrower_rate + listing_term + prosper_score + 
+##     stated_monthly_income + total_open_revolving_accounts + real_estate_balance + 
+##     total_inquiries + was_delinquent_derog, family = &quot;binomial&quot;, 
+##     data = listings3)
 ## 
 ## Deviance Residuals: 
 ##     Min       1Q   Median       3Q      Max  
-## -0.8893  -0.3389  -0.2856  -0.2342   3.0021  
+## -0.9538  -0.3398  -0.2856  -0.2338   2.9678  
 ## 
 ## Coefficients:
 ##                                 Estimate Std. Error z value Pr(&gt;|z|)    
-## (Intercept)                   -3.165e+00  3.142e-01 -10.071  &lt; 2e-16 ***
-## number_of_days                -1.297e-03  1.752e-04  -7.400 1.36e-13 ***
-## principal_balance             -2.571e-05  8.506e-06  -3.022 0.002507 ** 
-## amount_funded                  1.559e-05  5.749e-06   2.711 0.006710 ** 
-## prosper_ratingAA               6.272e-02  2.199e-01   0.285 0.775507    
-## prosper_ratingB               -1.714e-01  1.221e-01  -1.404 0.160243    
-## prosper_ratingC               -2.854e-01  1.658e-01  -1.721 0.085160 .  
-## prosper_ratingD               -5.776e-01  2.372e-01  -2.435 0.014878 *  
-## prosper_ratingE               -7.097e-01  3.093e-01  -2.294 0.021784 *  
-## prosper_ratingHR              -5.313e-01  3.760e-01  -1.413 0.157633    
-## borrower_rate                  7.863e-02  1.856e-02   4.238 2.26e-05 ***
-## listing_term                   1.085e-02  2.637e-03   4.113 3.90e-05 ***
-## prosper_score                 -1.031e-01  2.041e-02  -5.052 4.37e-07 ***
-## inquiries_last6_months        -5.963e-02  2.511e-02  -2.375 0.017563 *  
-## total_open_revolving_accounts  1.814e-02  6.114e-03   2.967 0.003006 ** 
-## real_estate_balance           -7.315e-07  2.203e-07  -3.321 0.000897 ***
-## revolving_balance             -3.790e-06  1.348e-06  -2.812 0.004920 ** 
-## total_inquiries                2.396e-02  7.837e-03   3.057 0.002235 ** 
-## was_delinquent_derog          -2.251e-02  8.283e-03  -2.718 0.006575 ** 
+## (Intercept)                   -1.895e+00  3.684e-01  -5.143 2.70e-07 ***
+## number_of_days                -1.217e-03  1.734e-04  -7.017 2.26e-12 ***
+## principal_balance             -2.579e-05  8.476e-06  -3.043 0.002343 ** 
+## amount_funded                  1.940e-05  5.734e-06   3.384 0.000715 ***
+## borrower_rate                  4.069e-02  7.092e-03   5.738 9.59e-09 ***
+## listing_term                   1.180e-02  2.463e-03   4.792 1.65e-06 ***
+## prosper_score                 -9.185e-02  1.872e-02  -4.907 9.27e-07 ***
+## stated_monthly_income         -1.351e-01  2.996e-02  -4.508 6.55e-06 ***
+## total_open_revolving_accounts  1.386e-02  5.801e-03   2.389 0.016895 *  
+## real_estate_balance           -8.025e-07  2.110e-07  -3.803 0.000143 ***
+## total_inquiries                2.020e-02  6.781e-03   2.978 0.002898 ** 
+## was_delinquent_derog          -1.860e-02  8.127e-03  -2.288 0.022131 *  
 ## ---
 ## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
 ## 
 ## (Dispersion parameter for binomial family taken to be 1)
 ## 
 ##     Null deviance: 12552  on 33541  degrees of freedom
-## Residual deviance: 12148  on 33523  degrees of freedom
-## AIC: 12186
+## Residual deviance: 12158  on 33530  degrees of freedom
+## AIC: 12182
 ## 
 ## Number of Fisher Scoring iterations: 6</code></pre>
 </div>
 <div id="model-selection-1" class="section level3">
 <h3>Model Selection</h3>
-<div id="aic" class="section level4">
-<h4>AIC</h4>
+<blockquote>
+<p>Choice: <strong>Model 3</strong></p>
+</blockquote>
+<ul>
+<li>We start from Model 1 by including all potential independent variables to get an sense about how these variables help to explain the possibility of default. Then, we remove all insignificant variables to fit the model better. We also try adding one variable each time to the model to see if these variables become significant.</li>
+<li>We choose <strong>Model 3</strong> as final regression model which explains the variations in default rate because:
+<ul>
+<li>All independent variables are <strong>significant</strong> at a minimum of 95% level.</li>
+<li>The model yields relatively lower <strong>AIC</strong> and higher <strong>McFadden’s Pseudo R-squared</strong>, suggesting <strong>Model 3</strong> fits the data well among the three models (not considering Model 1).</li>
+<li>Taking the predictability of fitted model into consideration, when we set the <em>cutoff point at 0.1</em>, <strong>Model 3</strong> has the highest accuracy in classifying default or not.</li>
+<li>We set <em>cutoff = 0.1</em> because for all three models, the maximum value of predicted possibility of default is around 30%. Setting a higher cutoff point (e.g., 0.2) will lead most actual default borrowers being classified/predicted as not default.</li>
+<li><em>See below the comparisons of Model 2, 3 and 4.</em></li>
+</ul></li>
+</ul>
+<div id="comparison-aic" class="section level4">
+<h4>1. Comparison: AIC</h4>
 <pre class="r"><code>AIC_02 = logisticmodel2$aic
 AIC_03 = logisticmodel3$aic
-AIC_04 = logisticmodel3$aic</code></pre>
+AIC_04 = logisticmodel4$aic</code></pre>
 </div>
-<div id="mcfaddens-pseudo-r-squared" class="section level4">
-<h4>McFadden’s Pseudo R-squared</h4>
+<div id="comparison-mcfaddens-pseudo-r-squared" class="section level4">
+<h4>2. Comparison: McFadden’s Pseudo R-squared</h4>
 <pre class="r"><code>pR2_02 = round(1 - logisticmodel2$deviance / logisticmodel2$null.deviance, 4)
 pR2_03 = round(1 - logisticmodel3$deviance / logisticmodel3$null.deviance, 4)
 pR2_04 = round(1 - logisticmodel4$deviance / logisticmodel4$null.deviance, 4)</code></pre>
 </div>
-<div id="confusion-matrix" class="section level4">
-<h4>Confusion Matrix</h4>
-<pre class="r"><code># Classiifications using cutoff = 0.1
-logisticmodel2_pred = ifelse(predict(logisticmodel2, type = &quot;response&quot;) &gt; 0.1, 1, 0)
-logisticmodel3_pred = ifelse(predict(logisticmodel3, type = &quot;response&quot;) &gt; 0.1, 1, 0)
-logisticmodel4_pred = ifelse(predict(logisticmodel4, type = &quot;response&quot;) &gt; 0.1, 1, 0)
-
-# Define a function to calculate error rate
+<div id="comparison-confusion-matrix-and-classification-accuracy" class="section level4">
+<h4>3. Comparison: Confusion Matrix and Classification Accuracy</h4>
+<pre class="r"><code># Define a function to calculate error rate
 calc_class_err = function(actual, predicted) {mean(actual != predicted)}
 
-# Classification accuracy and error rate
+# Model 2: Classiifications using cutoff = 0.1, classification accuracy and error rate
+logisticmodel2_pred = ifelse(predict(logisticmodel2, type = &quot;response&quot;) &gt; 0.1, 1, 0)
 error_02 &lt;- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel2_pred)
 accuracy_02 = round(1 - error_02, 5)
 
+# Model 3: Classiifications using cutoff = 0.1, classification accuracy and error rate
+logisticmodel3_pred = ifelse(predict(logisticmodel3, type = &quot;response&quot;) &gt; 0.1, 1, 0)
 error_03 &lt;- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel3_pred)
 accuracy_03 = round(1 - error_03, 5)
 
-error_04 &lt;- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel4_pred)
+# Model 4: Classiifications using cutoff = 0.1, classification accuracy and error rate
+logisticmodel4_pred = ifelse(predict(logisticmodel4, type = &quot;response&quot;) &gt; 0.1, 1, 0)
+error_04 &lt;- calc_class_err(actual = listings3$loan_status, predicted = logisticmodel4_pred)
 accuracy_04 = round(1 - error_04, 5)</code></pre>
-<pre class="r"><code># Confusion Matrix
+<pre class="r"><code># Model 2: Confusion Matrix
 logisticmodel2_conf_table = table(predicted = logisticmodel2_pred, actual = listings2$loan_status)
 logisticmodel2_conf_table</code></pre>
 <pre><code>##          actual
 ## predicted     0     1
 ##         0 31155  1455
 ##         1   838    94</code></pre>
-<pre class="r"><code>logisticmodel3_conf_table = table(predicted = logisticmodel3_pred, actual = listings2$loan_status)
+<pre class="r"><code># Model 3: Confusion Matrix
+logisticmodel3_conf_table = table(predicted = logisticmodel3_pred, actual = listings2$loan_status)
 logisticmodel3_conf_table</code></pre>
 <pre><code>##          actual
 ## predicted     0     1
-##         0 31062  1444
-##         1   931   105</code></pre>
-<pre class="r"><code>logisticmodel4_conf_table = table(predicted = logisticmodel4_pred, actual = listings2$loan_status)
+##         0 31231  1473
+##         1   762    76</code></pre>
+<pre class="r"><code># Model 4: Confusion Matrix
+logisticmodel4_conf_table = table(predicted = logisticmodel4_pred, actual = listings3$loan_status)
 logisticmodel4_conf_table</code></pre>
 <pre><code>##          actual
 ## predicted     0     1
-##         0 30991  1442
-##         1  1002   107</code></pre>
+##         0 31182  1470
+##         1   811    79</code></pre>
 </div>
-<div id="summary-table" class="section level4">
-<h4>Summary Table</h4>
+<div id="summary-of-comparison-results" class="section level4">
+<h4>4. Summary of Comparison Results</h4>
 <table>
 <thead>
 <tr class="header">
@@ -2224,20 +2232,20 @@ logisticmodel4_conf_table</code></pre>
 <tr class="odd">
 <td>AIC</td>
 <td>12241</td>
-<td>12136.95</td>
-<td>12136.95</td>
+<td>12197.76</td>
+<td>12182.24</td>
 </tr>
 <tr class="even">
 <td>Pseudo R-Squared</td>
 <td>0.0269</td>
-<td>0.035</td>
-<td>0.0322</td>
+<td>0.03</td>
+<td>0.0314</td>
 </tr>
 <tr class="odd">
 <td>Prediction Accuracy</td>
 <td>0.93164</td>
-<td>0.92919</td>
-<td>0.92714</td>
+<td>0.93337</td>
+<td>0.932</td>
 </tr>
 </tbody>
 </table>
@@ -2245,7 +2253,87 @@ logisticmodel4_conf_table</code></pre>
 </div>
 <div id="model-interpretation-1" class="section level3">
 <h3>Model Interpretation</h3>
+<blockquote>
+<p><strong><em>Overall Fit</em></strong></p>
+</blockquote>
+<ul>
+<li><strong>Model 3</strong> has relatively higher Pseudo R-squared among all candidates, so we expect this model to better predict further possibility of loan default (<code>loan_status</code>).</li>
+<li>The Pseudo R-squared of <strong>Model 3</strong> is 0.03, indicting only <strong>3%</strong> of the variation in the loan default probability (<code>loan_status</code>) in the sample is explained by the variation in a combination of loan term and size and credit riskvariables.</li>
+<li>Moreover, given the confusion matrix, when <strong>cutoff = 0.1</strong> (classify a borrower will default when the predicted probability is greater than or equal to 10% AND a borrower will not default when the predicted probability is less than or 10%), the overall accuracy of the prediction based on <strong>Model 3</strong> is <strong>93.34%</strong>, suggesting the model does well in estimating the probability of default.</li>
+</ul>
+<blockquote>
+<p><strong><em>Regression Coefficients</em></strong></p>
+</blockquote>
+<div id="a.-loan-size-and-term-1" class="section level5">
+<h5>A. Loan Size and Term</h5>
+<ol style="list-style-type: decimal">
+<li><code>number_of_days</code>: <strong>odds ratio</strong> = exp(coefficient of <code>number_of_days</code>) = 0.9988</li>
+</ol>
+<ul>
+<li><code>number_of_days</code> <strong>decreases</strong> the probability of <code>dafault</code>: odds ratio of <code>number_of_days</code> is 0.9988, suggesting on average, controlling for all other variables, every one unit (one day) increase in the number of days of the loan <strong>multiplies the odds of loan default</strong> by 0.9988.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li><code>principal_balance</code>: <strong>odds ratio</strong> = exp(coefficient of <code>principal_balance</code>) = 0.999975</li>
+</ol>
+<ul>
+<li><code>principal_balance</code> <strong>decreases</strong> the probability of <code>dafault</code>: odds ratio of <code>principal_balance</code> is 0.999975, suggesting on average, controlling for all other variables, every one unit ($1) increase in the loan principal balance <strong>multiplies the odds of loan default</strong> by 0.999975.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><code>amount_funded</code>: <strong>odds ratio</strong> = exp(coefficient of <code>amount_funded</code>) = 1.000015</li>
+</ol>
+<ul>
+<li><code>amount_funded</code> <strong>increases</strong> the probability of <code>dafault</code>: odds ratio of <code>amount_funded</code> is 1.000015, suggesting on average, controlling for all other variables, every one unit ($1) increase in the funded amount of the loan <strong>multiplies the odds of loan default</strong> by 1.000015.</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li><code>borrower_rate</code>: <strong>odds ratio</strong> = exp(coefficient of <code>borrower_rate</code>) = 1.0452</li>
+</ol>
+<ul>
+<li><code>borrower_rate</code> <strong>increases</strong> the probability of <code>dafault</code>: odds ratio of <code>borrower_rate</code> is 1.0452, suggesting on average, controlling for all other variables, every one unit (1%) increase in the loan borrower rate <strong>multiplies the odds of loan default</strong> by 1.0452.</li>
+</ul>
+<ol start="5" style="list-style-type: decimal">
+<li><code>listing_term</code>: <strong>odds ratio</strong> = exp(coefficient of <code>listing_term</code>) = 1.0116</li>
+</ol>
+<ul>
+<li><code>listing_term</code> <strong>increases</strong> the probability of <code>dafault</code>: odds ratio of <code>listing_term</code> is 1.0116, suggesting on average, controlling for all other variables, every one unit (one month) increase in the loan listing term <strong>multiplies the odds of loan default</strong> by 1.0116.</li>
+</ul>
+</div>
+<div id="b.-credit-score-matrices-1" class="section level5">
+<h5>B. Credit Score Matrices</h5>
+<ol style="list-style-type: decimal">
+<li><code>prosper_score</code>: <strong>odds ratio</strong> = exp(coefficient of <code>prosper_score</code>) = 0.9149</li>
+</ol>
+<ul>
+<li><code>prosper_score</code> <strong>decreases</strong> the probability of <code>dafault</code>: odds ratio of <code>prosper_score</code> is 0.9149, suggesting on average, controlling for all other variables, every one unit increase in the prosper score <strong>multiplies the odds of loan default</strong> by 0.9149.</li>
+</ul>
+</div>
+<div id="c.-other-credit-risk-matrices-1" class="section level5">
+<h5>C. Other Credit Risk Matrices</h5>
+<ol style="list-style-type: decimal">
+<li><code>total_inquiries</code>: <strong>odds ratio</strong> = exp(coefficient of <code>total_inquiries</code>) = 1.0161</li>
+</ol>
+<ul>
+<li><code>total_inquiries</code> <strong>increases</strong> the probability of <code>dafault</code>: odds ratio of <code>total_inquiries</code> is 1.0161, suggesting on average, controlling for all other variables, every one unit increase in the number of total inquiries <strong>multiplies the odds of loan default</strong> by 1.0161.</li>
+</ul>
+<ol start="2" style="list-style-type: decimal">
+<li><code>was_delinquent_derog</code>: <strong>odds ratio</strong> = exp(coefficient of <code>was_delinquent_derog</code>) = 0.9795</li>
+</ol>
+<ul>
+<li><code>was_delinquent_derog</code> <strong>decreases</strong> the probability of <code>dafault</code>: odds ratio of <code>was_delinquent_derog</code> is 0.9795, suggesting on average, controlling for all other variables, every one unit increase in the previous delinquencies <strong>multiplies the odds of loan default</strong> by 0.9795.</li>
+</ul>
+<ol start="3" style="list-style-type: decimal">
+<li><code>total_open_revolving_accounts</code>: <strong>odds ratio</strong> = exp(coefficient of <code>total_open_revolving_accounts</code>) = 1.0128</li>
+</ol>
+<ul>
+<li><code>total_open_revolving_accounts</code> <strong>increases</strong> the probability of <code>dafault</code>: odds ratio of <code>total_open_revolving_accounts</code> is 1.0128, suggesting on average, controlling for all other variables, every one unit increase in total open revolving accounts <strong>multiplies the odds of loan default</strong> by 1.0128.</li>
+</ul>
+<ol start="4" style="list-style-type: decimal">
+<li><code>real_estate_balance</code>: <strong>odds ratio</strong> = exp(coefficient of <code>real_estate_balance</code>) = 0.999999</li>
+</ol>
+<ul>
+<li><code>real_estate_balance</code> <strong>decreases</strong> the probability of <code>dafault</code>: odds ratio of <code>real_estate_balance</code> is 0.999999, suggesting on average, controlling for all other variables, every one unit ($1) increase in the real estate balance <strong>multiplies the odds of loan default</strong> by 0.999999.</li>
+</ul>
 <hr />
+</div>
 </div>
 </div>
 <div id="analysis" class="section level2">
