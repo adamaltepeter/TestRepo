@@ -417,12 +417,8 @@ exp(coef(logisticmodel3))
 
 
 
-
-
 ***
 
 
 ## Conclusion
-
-
 
