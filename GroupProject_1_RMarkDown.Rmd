@@ -356,11 +356,17 @@ Prediction Accuracy|`r accuracy_02`                 |`r accuracy_03`            
 
 ### Model Interpretation
 
+<<<<<<< HEAD
 > ***Overall Fit***
 
 * **Model 3** has relatively higher Pseudo R-squared among all candidates, so we expect this model to better predict further possibility of loan default (`loan_status`).
 * The Pseudo R-squared of **Model 3** is `r pR2_03`, indicting only **`r paste(round(pR2_03*100, 2), "%", sep="")`** of the variation in the loan default probability (`loan_status`) in the sample is explained by the variation in a combination of loan term and size and credit riskvariables.
 * Moreover, given the confusion matrix, when **cutoff = 0.1** (classify a borrower will default when the predicted probability is greater than or equal to 10% AND a borrower will not default when the predicted probability is less than or 10%), the overall accuracy of the prediction based on **Model 3** is **`r paste(round(accuracy_03*100, 2), "%", sep="")`**, suggesting the model does well in estimating the probability of default.
+=======
+Using the model selection criteria from the summary table it appears that Model 2, Model 3, and Model 4 are very close. The AIC, Pseudo R-Squared, and Prediction Accuracy for the models are all within 1% of each other. As such, this does not show one model as superior to the others.
+
+Looking at the Confusion matrices, the number of summed "False positives" and "False negatives," is lowest in model 2 (Model 2 = 2,293, Model 3 = 2,375, and Model 4 = 2,444). That said, the scenario that is most damaging is where you predict no default (a 0) and a default happens (a 1). The model that does the best in reducing this scenario is Model 4. As such, while there are very small differences in the models, **Model 4 is our selected model.** 
+>>>>>>> 22053882160702271a486a0b2bc0cf253446e7c8
 
 > ***Regression Coefficients***
 
@@ -416,6 +422,7 @@ exp(coef(logisticmodel3))
 
 
 ***
+
 
 ## Conclusion
 
