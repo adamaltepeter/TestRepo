@@ -420,8 +420,45 @@ exp(coef(logisticmodel3))
 
 
 
-***
 
 
-## Conclusion
+
+### Comparison of Variables in Both Models
+
+***Variables in Both Regression Models***
+
+Linear Model Variables            |Logistic Model Variables
+----------------------------------|------------------------
+`amount_funded`                   |`amount_funded`
+`listing_term`                    |`listing_term`
+`prosper_score`                   |`prosper_score`
+`total_open_revolving_accounts`   |`total_open_revolving_accounts`
+`real_estate_balance`             |`real_estate_balance`
+`total_inquiries`                 |`total_inquiries`
+`was_delinquent_derog`            |`was_delinquent_derog`
+
+
+***Variables in One Regression Model ONLY***
+
+Linear Model Variables            |Logistic Model Variables
+----------------------------------|------------------------
+`prosper_rating`                  |`number_of_days`
+`listing_monthly_payment`         |`principal_balance`
+`scorex`                          |`borrower_rate`
+`income_verifiable`               |`revolving_balance`
+`dti_wprosper_loan`               |
+`lender_indicator`                |
+`monthly_debt`                    |
+`current_delinquencies`           |
+`public_records_last12_months`    |
+`inquiries_last6_months`          |
+`amount_delinquent`               |
+`current_credit_lines`            |
+`open_credit_lines`               |
+`satisfactory_accounts`           |
+`bankcard_utilization`            |
+`delinquencies_over30_days`       |
+`delinquencies_over90_days`       |
+`is_homeowner`                    |
+
 
