@@ -71,7 +71,7 @@ summary(listings)
 
 ***
 
-## Linear Regression {.tabset}
+## Linear Regression Model {.tabset}
 
 ### Model 1
 
@@ -116,9 +116,9 @@ summary(model4)
 > Choice: **Model 4**
 
 * We start from Model 1 by including all potential independent variables to get an sense about how these variables help to explain the variations in `borrower_rate`. Then, we remove all insignificant variables to fit the model better. We also try adding one variable each time to the model to see if these variables become significant.
-* We choose **Model 4** as final regression model which explains the variations in loan interest rates because:
-  * 1. All independent variables except `scorex` are **significant** at a minimum of 95% level.
-  * 2. The model yields the highest **adjusted R-squared**, suggesting the model fits the data well. 
+* We choose **Model 4** as our final regression model which explains the variations in loan interest rates because:
+  * All independent variables except `scorex` are **significant** at a minimum of 95% level.
+  * The model yields the highest **adjusted R-squared**, suggesting the model fits the data well. 
 
 ### Model Interpretation
 
@@ -130,20 +130,22 @@ summary(model4)
 > ***Regression Coefficients***
 
 ```{r echo=FALSE, include=FALSE}
-# All coefficients of Model 4
+# All coefficients of Linear Regression Model 4
 model4$coefficients
 ```
 
-##### I Loan Size and Term
+##### A. Loan Size and Term
 
 1. `amount_funded`
 * `amount_funded` **decreases** `borrower_rate`: Every one unit ($1) increase in the funded amount of the listing is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["amount_funded","Estimate"], 4), "%", sep="")`.
+
 2. `listing_term`
 * `listing_term` **increase** `borrower_rate`: Every one unit (a month) increase in the listing terms is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["listing_term","Estimate"], 4), "%", sep="")`.
+
 3. `listing_monthly_payment`
 * `listing_monthly_payment` **increase** `borrower_rate`: Every one unit ($1) increase in the listing monthly payment is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["listing_monthly_payment","Estimate"], 4), "%", sep="")`.
 
-##### II Credit Score Matrices
+##### B. Credit Score Matrices
 
 1. `prosper_rating`
 * `borrower_rate` of `prosper_ratingAA` is **lower**  than `prosper_ratingA`: Controlling for all other variables, the expected loan interest rate is `r paste(round(-coef(summary(model4))["prosper_ratingAA","Estimate"], 4), "%", sep="")` lower for a prosper rating of AA than for a prosper rating of A.
@@ -166,7 +168,7 @@ model4$coefficients
 3. `prosper_score`
 * `prosper_score` **decreases** `borrower_rate`: Every one unit (one score) increase in the funded amount of the listing is associated with an estimated decrease in the loan interest rate of `r paste(round(-coef(summary(model4))["prosper_score","Estimate"], 4), "%", sep="")`.
 
-##### III Other Credit Risk Matrices
+##### C. Other Credit Risk Matrices
 
 1. `dti_wprosper_loan`
 * `dti_wprosper_loan` **increase** `borrower_rate`: Every one unit increase in the debt to income ratio is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["dti_wprosper_loan","Estimate"], 4), "%", sep="")`.
@@ -184,7 +186,7 @@ model4$coefficients
 * `amount_delinquent` **increase** `borrower_rate`: Every one unit ($1) increase in the current delinquent amount is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["amount_delinquent","Estimate"], 4), "%", sep="")`.
 
 6. `was_delinquent_derog`
-* `was_delinquent_derog` **increase** `borrower_rate`: Every one unit ($1) increase in the previous delinquencies is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["was_delinquent_derog","Estimate"], 4), "%", sep="")`.
+* `was_delinquent_derog` **increase** `borrower_rate`: Every one unit increase in the previous delinquencies is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["was_delinquent_derog","Estimate"], 4), "%", sep="")`.
 
 7. `delinquencies_over30_days`
 * `delinquencies_over30_days` **increase** `borrower_rate`: Every one unit increase in the number of delinquencies over 30 days at the time the listing is associated with an estimated increase in the loan interest rate of `r paste(round(coef(summary(model4))["delinquencies_over30_days","Estimate"], 4), "%", sep="")`.
@@ -222,20 +224,19 @@ model4$coefficients
 18. `is_homeowner`
 * `borrower_rate` of `is_homeownerTRUE` is **lower**  than `is_homeownerFALSE`: Controlling for all other variables, the expected loan interest rate is `r paste(round(-coef(summary(model4))["is_homeownerTRUE","Estimate"], 4), "%", sep="")` lower for a borrower who owns a home than for a borrower who does not.
 
-##### IV Borrower Data
+##### D. Borrower Data
 
 1. `income_verifiable`
 * `borrower_rate` of `income_verifiableTRUE` is **higher**  than `income_verifiableFALSE`: Controlling for all other variables, the expected loan interest rate is `r paste(round(coef(summary(model4))["income_verifiableTRUE","Estimate"], 4), "%", sep="")` higher for a borrower whose income is verifiable than for a borrower whose income is not.
 
 ***
 
-
-## Logistic Regression {.tabset}
+## Logistic Regression Model {.tabset}
 
 #### Modify dataset for Logistic Regression
 
 ```{r}
-#set up new data frame
+# Set up new data frame
 listings2 <- listings
 listings2$loan_status <- ifelse(listings2$loan_status == "DEFAULTED", 1,0)
 ```
@@ -260,33 +261,48 @@ summary(logisticmodel2)
 
 ### Model 3
 
-> Use stepwise regression (forward and backward selection) to determine the appropriate variables: Include `stated_monthly_income`
+> Use stepwise regression (forward and backward selection) to determine the appropriate variables
 
-```{r, warning=FALSE}
-logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
+```{r}
+logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
 summary(logisticmodel3)
 ```
 
 ### Model 4
 
-> Remove `stated_monthly_income` from Model 3 due to the warning message of fitted probabilities
+> Add `stated_monthly_income` to Model 3. There's a warning message of ***fitted probabilities numerically 0 or 1 occurred***. Since `stated_monthly_income` is positively skewed and contains lots of "0" values, we use log1p to transform the income data.
 
 ```{r}
-logisticmodel4 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + prosper_rating + borrower_rate + listing_term + prosper_score + inquiries_last6_months + total_open_revolving_accounts + real_estate_balance + revolving_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
+# Set up new data frame and transform stated_monthly_income using log1p.
+listings3 <- listings2
+listings3$stated_monthly_income <- log1p(listings3$stated_monthly_income)
+
+# Logistic regression model 4
+logisticmodel4 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + stated_monthly_income + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings3, family = "binomial")
 summary(logisticmodel4)
 ```
 
 ### Model Selection
 
-#### AIC
+> Choice: **Model 3**
+
+* We start from Model 1 by including all potential independent variables to get an sense about how these variables help to explain the possibility of default. Then, we remove all insignificant variables to fit the model better. We also try adding one variable each time to the model to see if these variables become significant.
+* We choose **Model 3** as final regression model which explains the variations in default rate because:
+  * All independent variables are **significant** at a minimum of 95% level.
+  * The model yields relatively lower **AIC** and higher **McFadden's Pseudo R-squared**, suggesting **Model 3** fits the data well among the three models (not considering Model 1). 
+  * Taking the predictability of fitted model into consideration, when we set the *cutoff point at 0.1*, **Model 3** has the highest accuracy in classifying default or not.
+  * We set *cutoff = 0.1* because for all three models, the maximum value of predicted possibility of default is around 30%. Setting a higher cutoff point (e.g., 0.2) will lead most actual default borrowers being classified/predicted as not default.
+  * *See below the comparisons of Model 2, 3 and 4.*
+
+#### 1. Comparison: AIC
 
 ```{r}
 AIC_02 = logisticmodel2$aic
 AIC_03 = logisticmodel3$aic
-AIC_04 = logisticmodel3$aic
+AIC_04 = logisticmodel4$aic
 ```
 
-#### McFadden's Pseudo R-squared
+#### 2. Comparison: McFadden's Pseudo R-squared
 
 ```{r}
 pR2_02 = round(1 - logisticmodel2$deviance / logisticmodel2$null.deviance, 4)
@@ -294,41 +310,43 @@ pR2_03 = round(1 - logisticmodel3$deviance / logisticmodel3$null.deviance, 4)
 pR2_04 = round(1 - logisticmodel4$deviance / logisticmodel4$null.deviance, 4)
 ```
 
-#### Confusion Matrix
+#### 3. Comparison: Confusion Matrix and Classification Accuracy
 
 ```{r}
-# Classiifications using cutoff = 0.1
-logisticmodel2_pred = ifelse(predict(logisticmodel2, type = "response") > 0.1, 1, 0)
-logisticmodel3_pred = ifelse(predict(logisticmodel3, type = "response") > 0.1, 1, 0)
-logisticmodel4_pred = ifelse(predict(logisticmodel4, type = "response") > 0.1, 1, 0)
-
 # Define a function to calculate error rate
 calc_class_err = function(actual, predicted) {mean(actual != predicted)}
 
-# Classification accuracy and error rate
+# Model 2: Classiifications using cutoff = 0.1, classification accuracy and error rate
+logisticmodel2_pred = ifelse(predict(logisticmodel2, type = "response") > 0.1, 1, 0)
 error_02 <- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel2_pred)
 accuracy_02 = round(1 - error_02, 5)
 
+# Model 3: Classiifications using cutoff = 0.1, classification accuracy and error rate
+logisticmodel3_pred = ifelse(predict(logisticmodel3, type = "response") > 0.1, 1, 0)
 error_03 <- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel3_pred)
 accuracy_03 = round(1 - error_03, 5)
 
-error_04 <- calc_class_err(actual = listings2$loan_status, predicted = logisticmodel4_pred)
+# Model 4: Classiifications using cutoff = 0.1, classification accuracy and error rate
+logisticmodel4_pred = ifelse(predict(logisticmodel4, type = "response") > 0.1, 1, 0)
+error_04 <- calc_class_err(actual = listings3$loan_status, predicted = logisticmodel4_pred)
 accuracy_04 = round(1 - error_04, 5)
 ```
 
 ```{r}
-# Confusion Matrix
+# Model 2: Confusion Matrix
 logisticmodel2_conf_table = table(predicted = logisticmodel2_pred, actual = listings2$loan_status)
 logisticmodel2_conf_table
 
+# Model 3: Confusion Matrix
 logisticmodel3_conf_table = table(predicted = logisticmodel3_pred, actual = listings2$loan_status)
 logisticmodel3_conf_table
 
-logisticmodel4_conf_table = table(predicted = logisticmodel4_pred, actual = listings2$loan_status)
+# Model 4: Confusion Matrix
+logisticmodel4_conf_table = table(predicted = logisticmodel4_pred, actual = listings3$loan_status)
 logisticmodel4_conf_table
 ```
 
-#### Summary Table
+#### 4. Summary of Comparison Results
 
 Comparison         |Model 2                         |Model 3                         |Model 4
 -------------------|--------------------------------|--------------------------------|--------------------------------
@@ -336,18 +354,70 @@ AIC                |`r format(AIC_02, scientific=F)`|`r format(AIC_03, scientifi
 Pseudo R-Squared   |`r pR2_02`                      |`r pR2_03`                      |`r pR2_04`       
 Prediction Accuracy|`r accuracy_02`                 |`r accuracy_03`                 |`r accuracy_04`  
 
-
 ### Model Interpretation
 
+> ***Overall Fit***
 
+* **Model 3** has relatively higher Pseudo R-squared among all candidates, so we expect this model to better predict further possibility of loan default (`loan_status`).
+* The Pseudo R-squared of **Model 3** is `r pR2_03`, indicting only **`r paste(round(pR2_03*100, 2), "%", sep="")`** of the variation in the loan default probability (`loan_status`) in the sample is explained by the variation in a combination of loan term and size and credit riskvariables.
+* Moreover, given the confusion matrix, when **cutoff = 0.1** (classify a borrower will default when the predicted probability is greater than or equal to 10% AND a borrower will not default when the predicted probability is less than or 10%), the overall accuracy of the prediction based on **Model 3** is **`r paste(round(accuracy_03*100, 2), "%", sep="")`**, suggesting the model does well in estimating the probability of default.
+
+> ***Regression Coefficients***
+
+```{r echo=FALSE, include=FALSE}
+# All coefficients of Logistic Regression Model 3
+logisticmodel3$coefficients
+
+# Odds ratios for all independent variables of Logistic Regression Model 3
+exp(coef(logisticmodel3))
+```
+
+##### A. Loan Size and Term
+
+1. `number_of_days`: **odds ratio** = exp(coefficient of `number_of_days`) = `r round(exp(coef(summary(logisticmodel3))["number_of_days","Estimate"]), 4)`
+* `number_of_days` **decreases** the probability of `dafault`: odds ratio of `number_of_days` is `r round(exp(coef(summary(logisticmodel3))["number_of_days","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit (one day) increase in the number of days of the loan **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["number_of_days","Estimate"]), 4)`.
+
+2. `principal_balance`: **odds ratio** = exp(coefficient of `principal_balance`) = `r round(exp(coef(summary(logisticmodel3))["principal_balance","Estimate"]), 6)`
+* `principal_balance` **decreases** the probability of `dafault`: odds ratio of `principal_balance` is `r round(exp(coef(summary(logisticmodel3))["principal_balance","Estimate"]), 6)`, suggesting on average, controlling for all other variables, every one unit ($1) increase in the loan principal balance **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["principal_balance","Estimate"]), 6)`.
+
+3. `amount_funded`: **odds ratio** = exp(coefficient of `amount_funded`) = `r round(exp(coef(summary(logisticmodel3))["amount_funded","Estimate"]), 6)`
+* `amount_funded` **increases** the probability of `dafault`: odds ratio of `amount_funded` is `r round(exp(coef(summary(logisticmodel3))["amount_funded","Estimate"]), 6)`, suggesting on average, controlling for all other variables, every one unit ($1) increase in the funded amount of the loan **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["amount_funded","Estimate"]), 6)`.
+
+4. `borrower_rate`: **odds ratio** = exp(coefficient of `borrower_rate`) = `r round(exp(coef(summary(logisticmodel3))["borrower_rate","Estimate"]), 4)`
+* `borrower_rate` **increases** the probability of `dafault`: odds ratio of `borrower_rate` is `r round(exp(coef(summary(logisticmodel3))["borrower_rate","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit (1%) increase in the loan borrower rate **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["borrower_rate","Estimate"]), 4)`.
+
+5. `listing_term`: **odds ratio** = exp(coefficient of `listing_term`) = `r round(exp(coef(summary(logisticmodel3))["listing_term","Estimate"]), 4)`
+* `listing_term` **increases** the probability of `dafault`: odds ratio of `listing_term` is `r round(exp(coef(summary(logisticmodel3))["listing_term","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit (one month) increase in the loan listing term **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["listing_term","Estimate"]), 4)`.
+
+##### B. Credit Score Matrices
+
+1. `prosper_score`: **odds ratio** = exp(coefficient of `prosper_score`) = `r round(exp(coef(summary(logisticmodel3))["prosper_score","Estimate"]), 4)`
+* `prosper_score` **decreases** the probability of `dafault`: odds ratio of `prosper_score` is `r round(exp(coef(summary(logisticmodel3))["prosper_score","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit increase in the prosper score **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["prosper_score","Estimate"]), 4)`.
+
+##### C. Other Credit Risk Matrices
+
+1. `total_inquiries`: **odds ratio** = exp(coefficient of `total_inquiries`) = `r round(exp(coef(summary(logisticmodel3))["total_inquiries","Estimate"]), 4)`
+* `total_inquiries` **increases** the probability of `dafault`: odds ratio of `total_inquiries` is `r round(exp(coef(summary(logisticmodel3))["total_inquiries","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit increase in the number of total inquiries **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["total_inquiries","Estimate"]), 4)`.
+
+2. `was_delinquent_derog`: **odds ratio** = exp(coefficient of `was_delinquent_derog`) = `r round(exp(coef(summary(logisticmodel3))["was_delinquent_derog","Estimate"]), 4)`
+* `was_delinquent_derog` **decreases** the probability of `dafault`: odds ratio of `was_delinquent_derog` is `r round(exp(coef(summary(logisticmodel3))["was_delinquent_derog","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit increase in the previous delinquencies **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["was_delinquent_derog","Estimate"]), 4)`.
+
+3. `total_open_revolving_accounts`: **odds ratio** = exp(coefficient of `total_open_revolving_accounts`) = `r round(exp(coef(summary(logisticmodel3))["total_open_revolving_accounts","Estimate"]), 4)`
+* `total_open_revolving_accounts` **increases** the probability of `dafault`: odds ratio of `total_open_revolving_accounts` is `r round(exp(coef(summary(logisticmodel3))["total_open_revolving_accounts","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit increase in total open revolving accounts **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["total_open_revolving_accounts","Estimate"]), 4)`.
+
+4. `real_estate_balance`: **odds ratio** = exp(coefficient of `real_estate_balance`) = `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`
+* `real_estate_balance` **decreases** the probability of `dafault`: odds ratio of `real_estate_balance` is `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`, suggesting on average, controlling for all other variables, every one unit ($1) increase in the real estate balance **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`.
 
 ***
 
-
 ## Analysis
+
+
+
 
 ***
 
 ## Conclusion
+
 
 
