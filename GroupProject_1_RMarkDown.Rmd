@@ -264,7 +264,7 @@ summary(logisticmodel2)
 > Use stepwise regression (forward and backward selection) to determine the appropriate variables
 
 ```{r}
-logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + total_open_revolving_accounts + real_estate_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
+logisticmodel3 = glm(loan_status ~ number_of_days + principal_balance + amount_funded + borrower_rate + listing_term + prosper_score + total_open_revolving_accounts + real_estate_balance + revolving_balance + total_inquiries + was_delinquent_derog, data = listings2, family = "binomial")
 summary(logisticmodel3)
 ```
 
@@ -292,7 +292,7 @@ summary(logisticmodel4)
   * Using the model selection criteria from the summary table it appears that Model 2, Model 3, and Model 4 are very close. The AIC, Pseudo R-Squared, and Prediction Accuracy for the models are all within 1% of each other. As such, this does not show one model as superior to the others.
   * Specifically, **Model 3** yields relatively lower **AIC** and higher **McFadden's Pseudo R-squared**, suggesting **Model 3** fits the data better among the three models (not considering Model 1). 
   * Taking the predictability of fitted model into consideration, when we set the *cutoff point at 0.1*, **Model 3** has the highest accuracy in classifying default or not.
-  * Looking at the Confusion matrices, the number of summed "False positives" and "False negatives," is lowest in model 2 (Model 2 = 2,293, Model 3 = 2,235, and Model 4 = 2,281). That said, the scenario that is most damaging is where you predict no default (a 0) and a default happens (a 1). The model that does the best in reducing this scenario is **Model 3**. As such, while there are very small differences in the models.
+  * Looking at the Confusion matrices, the number of summed "False positives" and "False negatives," is lowest in model 2 (Model 2 = 2,293, Model 3 = 2,263, and Model 4 = 2,281). That said, the scenario that is most damaging is where you predict no default (a 0) and a default happens (a 1). The model that does the best in reducing this scenario is **Model 3**. As such, while there are very small differences in the models.
   * We set *cutoff = 0.1* because for all three models, the maximum value of predicted possibility of default is around 30%. Setting a higher cutoff point (e.g., 0.2) will lead most actual default borrowers being classified/predicted as not default.
   * *See below the comparisons of Model 2, 3 and 4.*
 
@@ -407,7 +407,10 @@ exp(coef(logisticmodel3))
 3. `total_open_revolving_accounts`: **odds ratio** = exp(coefficient of `total_open_revolving_accounts`) = `r round(exp(coef(summary(logisticmodel3))["total_open_revolving_accounts","Estimate"]), 4)`
 * `total_open_revolving_accounts` **increases** the probability of `dafault`: odds ratio of `total_open_revolving_accounts` is `r round(exp(coef(summary(logisticmodel3))["total_open_revolving_accounts","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit increase in total open revolving accounts **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["total_open_revolving_accounts","Estimate"]), 4)`.
 
-4. `real_estate_balance`: **odds ratio** = exp(coefficient of `real_estate_balance`) = `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`
+4. `revolving_balance`: **odds ratio** = exp(coefficient of `revolving_balance`) = `r round(exp(coef(summary(logisticmodel3))["revolving_balance","Estimate"]), 4)`
+* `revolving_balance` **decreases** the probability of `dafault`: odds ratio of `revolving_balance` is `r round(exp(coef(summary(logisticmodel3))["revolving_balance","Estimate"]), 4)`, suggesting on average, controlling for all other variables, every one unit ($1) increase in the revolving balance **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["revolving_balance","Estimate"]), 4)`.
+
+5. `real_estate_balance`: **odds ratio** = exp(coefficient of `real_estate_balance`) = `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`
 * `real_estate_balance` **decreases** the probability of `dafault`: odds ratio of `real_estate_balance` is `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`, suggesting on average, controlling for all other variables, every one unit ($1) increase in the real estate balance **multiplies the odds of loan default** by `r round(exp(coef(summary(logisticmodel3))["real_estate_balance","Estimate"]), 6)`.
 
 ***
