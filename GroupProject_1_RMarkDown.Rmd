@@ -417,15 +417,25 @@ exp(coef(logisticmodel3))
 
 ## Analysis
 
+### Discussion of Arbitrage Opportunities
 
+While there are numerous factors that exist in both our models (credit model: linear model to determine how interest rates are determined and our default model: logistic model to determine factors that lead to loan default) there are a number of factors that are included in one model only. These factors appear to be opportunities for arbitrage.
 
+Factors that are in the credit model represent reasons to point to higher default risk (and a higher interest rate), that are in all actuality, not very predictive of loan default. By using predictive factors, roughly some loans will have interest rates that are lower than interest rates should be based on the risk of the loan, and some loans will have interest rates that are higher than they likely should be, based on the risk of the loan. By using a large amount of factors for interest rate, this creates unneeded complexity. On one hand, there are loans that the bank may be getting higher interest payments, and making more money on, than what they would have if some factors were removed. That being said, by giving a consumer a higher rate loan, based on factors that are not predictive of a loan default, the bank may be pushing away consumers due to higher rates, for loans that would be profitable at a slightly lower interest rate and are not extremely risky. This could happen if competitors are better modeling the risk in the interest rate calculation for consumers and consumers then self select into the lower interest rate loan at a competitor.
 
+On the other side, there are factors that appear to be predictive of loan default that are not being taken into consideration in the interest rate calculation. These variables appear to be opportunities for the bank to better segment risk and possibly extract additional income (or better cover their actual risk) by increasing interest rates. Looking at the list that is generated, it appears that the borrowing rate is one variable that the bank should be aware of as they select the rate they are giving to a consumer. A higher rate in itself appears to be predictive of default. In this situation, it is possible that a lower interest rate that is easier to pay, depending on the number of defaults that actually happen, may be more profitable for the bank. A second factor that banks should consider is the revolving_balance.
 
+### Comparison of Two Models
 
+* **Variables Causing Default But Not Shown in Linear Regression Model:** `number_of_days`, `principal_balance`, `borrower_rate` and `revolving_balance`.
 
-### Comparison of Variables in Both Models
+* **Market Considers as Risk Factors but Actually NOT:** `income_range`, `stated_monthly_income`, `employment_status_description`, `occupation`, `months_employed`, `delinquencies_last7_years`, `public_records_last10_years`, `real_estate_balance` and `real_estate_payment`.
 
-***Variables in Both Regression Models***
+* **Market Doesn't Considers Risk Factors but Actually ARE:** `listing_term`, `total_inquiries`, `satisfactory_accounts` and `is_homeowner`.
+
+<br>
+
+* **Variables in Both Regression Models**
 
 Linear Model Variables            |Logistic Model Variables
 ----------------------------------|------------------------
@@ -437,8 +447,7 @@ Linear Model Variables            |Logistic Model Variables
 `total_inquiries`                 |`total_inquiries`
 `was_delinquent_derog`            |`was_delinquent_derog`
 
-
-***Variables in One Regression Model ONLY***
+* **Variables in One Regression Model ONLY**
 
 Linear Model Variables            |Logistic Model Variables
 ----------------------------------|------------------------
@@ -460,5 +469,3 @@ Linear Model Variables            |Logistic Model Variables
 `delinquencies_over30_days`       |
 `delinquencies_over90_days`       |
 `is_homeowner`                    |
-
-
